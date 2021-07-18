@@ -1,0 +1,15 @@
+SI P and Q => R
+SI P => R
+SI A and B => F
+SI B and D => G and R
+SI D and B and K => G and R
+SI F and P and D and Q => R
+SI Q => R
+SI B => M
+SI B and D => M
+SI B and D and M => M
+SI noA and B => I and F and H
+SI noA and B and C => I and F and H
+SI noG and H and M => I 
+SI H and M and C => I 
+SI H and M and C => I
