@@ -16,10 +16,11 @@ namespace TestDeInconsistencias
                 var option = 10;
                 while (option != 0)
                 {
+                    Console.WindowWidth = 150;
                     Console.WriteLine("Reglas: ");
                     FunctionHelper.PrintRuleList(rules);
-                    Console.WriteLine("=== Detector de Inconsistencias===");
-                    Console.WriteLine("Elija opcion:\n 1) Reglas Redundates\n 2) Reglas Conflictivas\n 3) Condiciones Incluidas En Otras\n 4) Condiciones SI Innecesarias\n 0) Salir ");
+                    Console.WriteLine("====Detector de Inconsistencias====");
+                    Console.WriteLine("Elija opcion:\n 1) Reglas Redundates\n 2) Reglas Conflictivas\n 3) Reglas Incluidas En Otras\n 4) Condiciones SI Innecesarias\n 0) Salir ");
                     Console.Write("==> ");
                     option = Convert.ToInt32(Console.ReadLine());
                     Console.Clear();
@@ -32,7 +33,7 @@ namespace TestDeInconsistencias
                             FunctionHelper.FindReglasConflictivas(equalAntecedentRules);
                             break;
                         case 3:
-                            FunctionHelper.FindCondicionesIncluidasEnOtras(equalConsequentRules);
+                            FunctionHelper.FindReglasIncluidasEnOtras(equalConsequentRules);
                             break;
                         case 4:
                             FunctionHelper.FindCondicionesSiInnecesarias(equalConsequentRules);
