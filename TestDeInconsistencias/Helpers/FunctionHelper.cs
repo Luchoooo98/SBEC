@@ -182,10 +182,9 @@ namespace TestDeInconsistencias.Helpers
                     ComparacionDeAntecedentesIncluidasEnOtras(r, rule1AntArray, rule2AntArray);
                 }
 
-                //Si tienen la misma longitud ya se da por hecho que ambos se incluyen entre si? me genera duda este caso propuesto con lo del set de datos (ultimas dos reglas).
                 if (rule1AntArray.Count == rule2AntArray.Count)
                 {
-                    Console.WriteLine($"Regla -{r.Rule1.Id}- Y Regla -{r.Rule2.Id}- tienen la misma longitud y amabas tienen el mismo consecuente por lo que las reglas estan incluidas entre si y una podria eliminarse..");
+                    ComparacionDeAntecedentesIncluidasEnOtras(r, rule1AntArray, rule2AntArray);
                 }
             });
 
@@ -198,7 +197,7 @@ namespace TestDeInconsistencias.Helpers
             //Se compara los elementos del primero con los del segundo para ver si existe uno dentro del otro.
             reglaMenorLongitud.ForEach(itemRule =>
             {
-                var existe = reglaMayorLongitud.Where(x => x.Contains(itemRule));
+                var existe = reglaMayorLongitud.Where(x => x.Contains(itemRule)).FirstOrDefault();
                 if (existe != null)
                 {
                     //si da resultado, incremento el contador para saber que ese elemento fue encontrado

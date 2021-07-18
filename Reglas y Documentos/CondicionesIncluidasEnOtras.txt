@@ -5,11 +5,8 @@ SI noA and B => I and F and H
 SI noA and B and C => I and F and H
 SI noG and H and M => I 
 SI H and M and C => I 
+SI H and M and C => I 
 
 
 
 
-[B][D]
-[B]
-
-SI array[]
