@@ -2,7 +2,7 @@
 {
     public static class Constants
     {
-        public static readonly string FILE_ROUTE = "C:\\Users\\Luciano Otegui\\Desktop\\Reglas.txt";
+        public static readonly string FILE_ROUTE = "C:\\Users\\Dogui\\Desktop\\Reglas.txt";
 
         public static readonly string RULE_START = "SI";
 

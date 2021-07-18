@@ -68,6 +68,7 @@ namespace TestDeInconsistencias.Helpers
 
         public static void PrintRuleList(List<Rule> rules)
         {
+            Console.WriteLine("====================================================================");
             foreach (var rule in rules)
             {
                 Console.WriteLine($"Regla {rule.Id}: {rule.Antecedent} => {rule.Consequent}");
@@ -98,7 +99,7 @@ namespace TestDeInconsistencias.Helpers
                         letter = rule1ConsArray[index];
                         if (rule2ConsArray.Contains(letter))
                         {
-                            Console.WriteLine($"{letter} de Regla -{r.Rule1.Id}- encontrada en Regla -{r.Rule2.Id}- . SON REDUNDANTES");
+                            Console.WriteLine($"{letter} de Regla -{r.Rule1.Id}- encontrada en Regla -{r.Rule2.Id}- por lo que son Reglas Redundantes.");
                             break;
                         }
                         index += 1;
@@ -141,7 +142,7 @@ namespace TestDeInconsistencias.Helpers
                     {
                         if (rule2ConsArray.Contains(letter))
                         {
-                            Console.WriteLine($"{letter} de Regla -{r.Rule1.Id}- encontrado en Regla -{r.Rule2.Id}-. SON CONFLICTIVAS");
+                            Console.WriteLine($"{letter} de Regla -{r.Rule1.Id}- encontrado en Regla -{r.Rule2.Id}- por lo que son Reglas Conflictivas.");
                             break;
                         }
                     }
@@ -157,61 +158,50 @@ namespace TestDeInconsistencias.Helpers
 
 
         //Reglas incluidas en otras: Una esta incluida en otra si AMBAS TIENEN = CONSECUENTE
-        // y las precondiciones de una se satisfacen, si las precondiciones de otra se satisfacen
-        // Habria que comparar los antecedentes: Podemos tomar la que tiene menos elementos, y compararla contra la que tiene mas
-        // Si todos los elementos de la mas chica estan en la mas grande, está la mas chica incluida en la mas grande.
-        // Si tienen el mismo Length, automaticamente sabemos que son la misma regla!.
-        public static void FindCondicionesIncluidasEnOtras(List<EqualComponentRule> pairedRules)
+        // y las precondiciones de una se satisfacen, si las precondiciones de otra se satisfacen.
+        public static void FindReglasIncluidasEnOtras(List<EqualComponentRule> pairedRules)
         {
-            Console.WriteLine("==Chequeando Condiciones Incluidas En Otras==\n");
+            Console.WriteLine("==Chequeando Reglas Incluidas En Otras==\n");
 
             pairedRules.ForEach(r =>
             {
-                //Se toman los antecedentes de cada regla separandolos en una lista.
-                var rule1AntArray = r.Rule1.Antecedent.Replace(" ", "").Split(Constants.Constants.AND).ToList();
-                var rule2AntArray = r.Rule2.Antecedent.Replace(" ", "").Split(Constants.Constants.AND).ToList();
-
-                //Se verifican la longitud de ambos, para saber cual es el que tenga menor longitud. El menor es el que se va a usar para comparar los elementos y ver si sus antecedentes estan incluidos en el segundo.
-                if (rule1AntArray.Count > rule2AntArray.Count)
+                if (!AntecedentsOrConsequentsAreEqual(r.Rule1, r.Rule2, true))
                 {
-                    ComparacionDeAntecedentesIncluidasEnOtras(r, rule2AntArray, rule1AntArray);
-                }
+                    //1) Obtener los antecedentes
+                    var rule1AntArray = r.Rule1.Antecedent.Replace(" ", "").Split(Constants.Constants.AND);
+                    var rule2AntArray = r.Rule2.Antecedent.Replace(" ", "").Split(Constants.Constants.AND);
 
-                if (rule1AntArray.Count < rule2AntArray.Count)
-                {
-                    ComparacionDeAntecedentesIncluidasEnOtras(r, rule1AntArray, rule2AntArray);
-                }
+                    //2) Si los antecedentes tienen el mismo length, no puede ser una regla incluida en otra porque serian la misma regla.
+                    if (rule1AntArray.Length != rule2AntArray.Length)
+                    {
+                        //3) Separar los antecedentes por el que tenga menos miembros y el que tenga mas miembros.
+                        var lessMembersAntArray = rule1AntArray.Length < rule2AntArray.Length ? rule1AntArray : rule2AntArray;
+                        var moreMembersAntRuleArray = rule1AntArray.Length > rule2AntArray.Length ? rule1AntArray : rule2AntArray;
 
-                if (rule1AntArray.Count == rule2AntArray.Count)
-                {
-                    ComparacionDeAntecedentesIncluidasEnOtras(r, rule1AntArray, rule2AntArray);
+                        bool differenceFound = false;
+                        int index = 0;
+                        while (!differenceFound && index < lessMembersAntArray.Length)
+                        {
+                            if (!moreMembersAntRuleArray.Contains(lessMembersAntArray[index]))
+                            {
+                                differenceFound = true;
+                            }
+
+                            index += 1;
+                        }
+                        if (!differenceFound)
+                            Console.WriteLine($"La Regla -{r.Rule1.Id}- y -{r.Rule2.Id}- son un caso de Reglas Incluidas En Otras.");
+                    }
+
                 }
+                else
+                    Console.WriteLine($"Regla -{r.Rule1.Id}- Y Regla -{r.Rule2.Id}- tienen el mismo antecedente por lo que las reglas son iguales.");
+
+
             });
 
-            Console.WriteLine("\n==Fin del análisis de condiciones incluidas en otras==\n");
+            Console.WriteLine("\n==Fin del análisis de reglas incluidas en otras==\n");
         }
-
-        private static void ComparacionDeAntecedentesIncluidasEnOtras(EqualComponentRule r, List<string> reglaMenorLongitud, List<string> reglaMayorLongitud)
-        {
-            var inc = 0;
-            //Se compara los elementos del primero con los del segundo para ver si existe uno dentro del otro.
-            reglaMenorLongitud.ForEach(itemRule =>
-            {
-                var existe = reglaMayorLongitud.Where(x => x.Contains(itemRule)).FirstOrDefault();
-                if (existe != null)
-                {
-                    //si da resultado, incremento el contador para saber que ese elemento fue encontrado
-                    inc++;
-                }
-            });
-
-            //Si el contador es == a la longitud de la regla de menor longitud significa que todos sus elementos fueron encontrados y es una regla incluida en otra.
-            if (inc == reglaMenorLongitud.Count)
-            {
-                Console.WriteLine($"La Regla -{r.Rule1.Id} se encuentra incluida en la Regla -{r.Rule2.Id}- por lo que la regla de mayor longitud podria eliminarse ya que ambas operan con el mismo consecuente.");
-            }
-        }
-
 
         //Condiciones SI innecesarias: Ambas tienen = Consecuente, y una de las precondiciones de la primera es la negacion 
         // de una de las precondiciones de la segunda. Ademas, las otras precondiciones deben ser equivalentes.
@@ -259,7 +249,6 @@ namespace TestDeInconsistencias.Helpers
                 }
                 else
                     Console.WriteLine($"Regla -{r.Rule1.Id}- Y Regla -{r.Rule2.Id}- tienen el mismo antecedente por lo que las reglas son iguales.");
-
             });
 
             Console.WriteLine("\n==Fin del análisis de condiciones si innecesarias==\n");
