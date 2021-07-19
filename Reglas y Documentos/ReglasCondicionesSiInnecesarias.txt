@@ -1,0 +1,7 @@
+SI B and D and G => M
+SI G and D and noB => M
+SI A and B => I and F and H
+SI A and B and C => I and F and H
+SI H and G and M => I and F and H
+SI noG and H and M => I and F and H
+SI A and B and C => I and F and H

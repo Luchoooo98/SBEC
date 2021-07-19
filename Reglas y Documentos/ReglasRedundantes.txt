@@ -1,0 +1,7 @@
+SI noA and noC and noB => I and K and F
+SI noA and noB and noC => G and F and U and E
+SI A and D and H => G and F and noO
+SI D and H and A => U and I and P and G
+SI A and J and H => K and I and P
+SI noA and noB and noC => N
+SI noC and noA and noB => J and P and N

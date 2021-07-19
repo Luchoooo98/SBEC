@@ -25,10 +25,10 @@ namespace TestDeInconsistencias.Helpers
                 rule2Array = rule2.Consequent.Replace(" ", "").Split(Constants.Constants.AND);
             }
 
-            return AntecedentsOrConsequentesAreEqual(rule1Array, rule2Array);
+            return AntecedentsOrConsequentsAreEqual(rule1Array, rule2Array);
         }
 
-        public static bool AntecedentsOrConsequentesAreEqual(string[] rule1Array, string[] rule2Array)
+        public static bool AntecedentsOrConsequentsAreEqual(string[] rule1Array, string[] rule2Array)
         {
 
             if (rule1Array.Length != rule2Array.Length)
@@ -157,35 +157,40 @@ namespace TestDeInconsistencias.Helpers
 
 
         //Reglas incluidas en otras: Una esta incluida en otra si AMBAS TIENEN = CONSECUENTE
-        // y las precondiciones de una se satisfacen, si las precondiciones de otra se satisfacen
-        // Habria que comparar los antecedentes: Podemos tomar la que tiene menos elementos, y compararla contra la que tiene mas
+        // y las precondiciones de una se satisfacen, si las precondiciones de otra se satisfacen.
         // Si todos los elementos de la mas chica estan en la mas grande, está la mas chica incluida en la mas grande.
-        // Si tienen el mismo Length, automaticamente sabemos que son la misma regla!.
-        public static void FindCondicionesIncluidasEnOtras(List<EqualComponentRule> pairedRules)
+        // Si tienen el mismo Length, automaticamente sabemos que son la misma regla.
+        public static void FindReglasIncluidasEnOtras(List<EqualComponentRule> pairedRules)
         {
-            Console.WriteLine("==Chequeando Condiciones Incluidas En Otras==\n");
+            Console.WriteLine("==Chequeando Reglas Incluidas En Otras==\n");
 
             pairedRules.ForEach(r =>
             {
-                //Se toman los antecedentes de cada regla separandolos en una lista.
-                var rule1AntArray = r.Rule1.Antecedent.Replace(" ", "").Split(Constants.Constants.AND).ToList();
-                var rule2AntArray = r.Rule2.Antecedent.Replace(" ", "").Split(Constants.Constants.AND).ToList();
-
-                //Se verifican la longitud de ambos, para saber cual es el que tenga menor longitud. El menor es el que se va a usar para comparar los elementos y ver si sus antecedentes estan incluidos en el segundo.
-                if (rule1AntArray.Count > rule2AntArray.Count)
+                if (!AntecedentsOrConsequentsAreEqual(r.Rule1, r.Rule2, true))
                 {
-                    ComparacionDeAntecedentesIncluidasEnOtras(r, rule2AntArray, rule1AntArray);
-                }
+                    //Se toman los antecedentes de cada regla separandolos en una lista.
+                    var rule1AntArray = r.Rule1.Antecedent.Replace(" ", "").Split(Constants.Constants.AND).ToList();
+                    var rule2AntArray = r.Rule2.Antecedent.Replace(" ", "").Split(Constants.Constants.AND).ToList();
 
-                if (rule1AntArray.Count < rule2AntArray.Count)
-                {
-                    ComparacionDeAntecedentesIncluidasEnOtras(r, rule1AntArray, rule2AntArray);
-                }
+                    //Se verifican la longitud de ambos, para saber cual es el que tenga menor longitud. El menor es el que se va a usar para comparar los elementos y ver si sus antecedentes estan incluidos en el segundo.
+                    if (rule1AntArray.Count > rule2AntArray.Count)
+                    {
+                        ComparacionDeAntecedentesIncluidasEnOtras(r, rule2AntArray, rule1AntArray);
+                    }
 
-                if (rule1AntArray.Count == rule2AntArray.Count)
-                {
-                    ComparacionDeAntecedentesIncluidasEnOtras(r, rule1AntArray, rule2AntArray);
+                    if (rule1AntArray.Count < rule2AntArray.Count)
+                    {
+                        ComparacionDeAntecedentesIncluidasEnOtras(r, rule1AntArray, rule2AntArray);
+                    }
+
+                    if (rule1AntArray.Count == rule2AntArray.Count)
+                    {
+                        ComparacionDeAntecedentesIncluidasEnOtras(r, rule1AntArray, rule2AntArray);
+                    }
                 }
+                else
+                    Console.WriteLine($"Regla -{r.Rule1.Id}- Y Regla -{r.Rule2.Id}- tienen el mismo antecedente por lo que las reglas son iguales.");
+
             });
 
             Console.WriteLine("\n==Fin del análisis de condiciones incluidas en otras==\n");
@@ -208,7 +213,7 @@ namespace TestDeInconsistencias.Helpers
             //Si el contador es == a la longitud de la regla de menor longitud significa que todos sus elementos fueron encontrados y es una regla incluida en otra.
             if (inc == reglaMenorLongitud.Count)
             {
-                Console.WriteLine($"La Regla -{r.Rule1.Id} se encuentra incluida en la Regla -{r.Rule2.Id}- por lo que la regla de mayor longitud podria eliminarse ya que ambas operan con el mismo consecuente.");
+                Console.WriteLine($"Regla -{r.Rule1.Id}- Y -{r.Rule2.Id}- son un caso de Reglas Incluidas en Otras.");
             }
         }
 
@@ -246,7 +251,7 @@ namespace TestDeInconsistencias.Helpers
                                 rule2AntArray = rule2AntArray.Where(l => l != invertedLetter).ToArray();
 
                                 //Si lo son, entonces hay condición si innecesaria.
-                                if (AntecedentsOrConsequentesAreEqual(rule1AntArray, rule2AntArray))
+                                if (AntecedentsOrConsequentsAreEqual(rule1AntArray, rule2AntArray))
                                 {
                                     Console.WriteLine($"Se encontró -{letter}- en Regla -{r.Rule1.Id}- y {invertedLetter} en Regla -{r.Rule2.Id}-. " +
                                     $"Además, el resto del antecedente es igual; por lo tanto hay Condiciones Si Innecesarias.");
