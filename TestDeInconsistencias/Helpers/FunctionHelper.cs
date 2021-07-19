@@ -202,7 +202,7 @@ namespace TestDeInconsistencias.Helpers
             //Se compara los elementos del primero con los del segundo para ver si existe uno dentro del otro.
             reglaMenorLongitud.ForEach(itemRule =>
             {
-                var existe = reglaMayorLongitud.Where(x => x.Contains(itemRule)).FirstOrDefault();
+                var existe = reglaMayorLongitud.Where(x => x == itemRule).FirstOrDefault();
                 if (existe != null)
                 {
                     //si da resultado, incremento el contador para saber que ese elemento fue encontrado
