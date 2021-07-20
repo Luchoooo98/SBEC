@@ -141,7 +141,7 @@ namespace TestDeInconsistencias.Helpers
                     {
                         if (rule2ConsArray.Contains(letter))
                         {
-                            Console.WriteLine($"{letter} de Regla -{r.Rule1.Id}- encontrado en Regla -{r.Rule2.Id}-. SON CONFLICTIVAS");
+                            Console.WriteLine($"{letter} de Regla -{r.Rule2.Id}- encontrado en Regla -{r.Rule1.Id}-. SON CONFLICTIVAS");
                             break;
                         }
                     }
@@ -199,6 +199,9 @@ namespace TestDeInconsistencias.Helpers
         private static void ComparacionDeAntecedentesIncluidasEnOtras(EqualComponentRule r, List<string> reglaMenorLongitud, List<string> reglaMayorLongitud)
         {
             var inc = 0;
+            string reglaPosibleEliminacion = r.Rule1.Antecedent.Length > r.Rule2.Antecedent.Length ? $"Por lo que la Regla {r.Rule1.Id} podria eliminarse." 
+                                                                                : (r.Rule1.Antecedent.Length < r.Rule2.Antecedent.Length ? $"Por lo que la Regla {r.Rule2.Id} podria eliminarse."
+                                                                                    : $"Por lo que cualquiera de las reglas podrian eliminarse.");
             //Se compara los elementos del primero con los del segundo para ver si existe uno dentro del otro.
             reglaMenorLongitud.ForEach(itemRule =>
             {
@@ -213,7 +216,7 @@ namespace TestDeInconsistencias.Helpers
             //Si el contador es == a la longitud de la regla de menor longitud significa que todos sus elementos fueron encontrados y es una regla incluida en otra.
             if (inc == reglaMenorLongitud.Count)
             {
-                Console.WriteLine($"Regla -{r.Rule1.Id}- Y -{r.Rule2.Id}- son un caso de Reglas Incluidas en Otras.");
+                Console.WriteLine($"Regla -{r.Rule1.Id}- Y -{r.Rule2.Id}- son un caso de Reglas Incluidas en Otras. {reglaPosibleEliminacion}");
             }
         }
 
